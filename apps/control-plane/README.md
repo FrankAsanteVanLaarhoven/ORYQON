@@ -1,8 +1,8 @@
 # @oryqon/control-plane
 
-TypeScript control plane. **Gate 0 (secure foundation) is implemented and
-tested**; the rest of the control plane (settings, policy engine, connectors,
-real-time events) follows in later gates.
+TypeScript control plane. **Gates 0–2 are implemented and tested**; the rest of
+the control plane (connectors, campaigns, real-time events) follows in later
+gates.
 
 ## Gate 0 — security foundation
 
@@ -31,6 +31,21 @@ CI (`.github/workflows/ci.yml`) — see `db/README.md`.
 `src/policy/policy-engine.ts` rule for rule and is unit-tested with `opa test` in
 CI (`.github/workflows/ci.yml`).
 
+## Gate 2 — products & evidence
+
+| Concern | Module | Proof |
+| --- | --- | --- |
+| Immutable, content-addressed evidence | `src/products/evidence-store.ts` | `test/evidence.test.ts` — frozen on record, canonical SHA-256 hash, idempotent, tenant-scoped reads, integrity verification |
+| Product Passport (one verified record) | `src/products/product-passport.ts` | `test/product-passport.test.ts` — claim → evidence verification, cross-tenant fail-closed, publish freezes |
+| Publish requires evidence | `src/products/product-passport.ts` | `test/product-passport.test.ts` — a required unverified claim raises `PUBLISH_WITHOUT_EVIDENCE`; `hasRequiredEvidence()` gates the policy engine's `PUBLISH_CONTENT` decision |
+
+Evidence is content-addressed (SHA-256 over a canonical serialization) and
+deep-frozen on record, so an attestation can never be edited after the fact. A
+passport publishes only when every required claim carries verified evidence —
+the same `PUBLISH_WITHOUT_EVIDENCE` reason the policy engine emits — and is
+immutable once published (WITHDRAWN is the only onward transition). All state is
+bound to the creating tenant; cross-tenant use fails closed.
+
 ## Commands
 
 ```bash
@@ -41,5 +56,6 @@ opa test apps/control-plane/policies -v               # rego policy unit tests
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gates 0 and 1 CLOSED — app + database + policy layers tested.
-Gates 2–7 per `../../docs/ARCHITECTURE.md`.
+**Status:** Gates 0, 1 and 2 CLOSED — app + database + policy + products/evidence
+layers tested (71 native `node --test` cases + 6 `opa test`). Gates 3–7 per
+`../../docs/ARCHITECTURE.md`.

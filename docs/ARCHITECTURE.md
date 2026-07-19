@@ -82,3 +82,13 @@ never receives the underlying credential.
   OPA bundle (`apps/control-plane/policies/oryqon.rego`) mirrors the in-process
   engine and is unit-tested with `opa test` in CI. Control-plane suite: 52 native
   `node --test` cases + 6 rego cases.
+- **Milestone 1 — Gate 2 (products & evidence): CLOSED.**
+  Content-addressed, immutable evidence (`src/products/evidence-store.ts`) — a
+  SHA-256 hash over a canonical serialization, deep-frozen on record, idempotent,
+  tenant-scoped, with integrity verification. The Product Passport
+  (`src/products/product-passport.ts`) holds claims that are UNVERIFIED until
+  tenant-scoped evidence is attached; publishing FAILS CLOSED
+  (`PUBLISH_WITHOUT_EVIDENCE`) unless every required claim is verified, and a
+  published passport is immutable (WITHDRAWN is the only onward transition).
+  `hasRequiredEvidence()` feeds the policy engine's evidence gate directly.
+  Control-plane suite now 71 native `node --test` cases + 6 rego cases.

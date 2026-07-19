@@ -13,3 +13,6 @@ export * from './policy/policy-registry.ts';
 export * from './policy/policy-engine.ts';
 export * from './rbac/roles.ts';
 export * from './auth/step-up.ts';
+// Gate 2 — products & evidence.
+export * from './products/evidence-store.ts';
+export * from './products/product-passport.ts';
