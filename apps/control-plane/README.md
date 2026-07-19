@@ -1,7 +1,7 @@
 # @oryqon/control-plane
 
-TypeScript control plane. **Gates 0–2 are implemented and tested**; the rest of
-the control plane (connectors, campaigns, real-time events) follows in later
+TypeScript control plane. **Gates 0–3 are implemented and tested**; the rest of
+the control plane (campaigns, connectors, real-time events) follows in later
 gates.
 
 ## Gate 0 — security foundation
@@ -46,6 +46,21 @@ the same `PUBLISH_WITHOUT_EVIDENCE` reason the policy engine emits — and is
 immutable once published (WITHDRAWN is the only onward transition). All state is
 bound to the creating tenant; cross-tenant use fails closed.
 
+## Gate 3 — agent control plane
+
+| Concern | Module | Proof |
+| --- | --- | --- |
+| Bounded-autonomy envelope | `src/agents/agent-registry.ts` | `test/agent-registry.test.ts` — allowed action types, risk ceiling, autonomy and step budget fixed at registration; capabilities frozen, status suspend/reinstate, tenant-scoped |
+| Bounded run lifecycle | `src/agents/agent-run.ts` | `test/agent-run.test.ts` — ACTIVE with a step budget; terminal COMPLETED/FAILED/ABORTED; over-budget and post-terminal steps fail closed; cross-tenant fails closed |
+| Proposal admission gate | `src/agents/admission.ts` | `test/agent-admission.test.ts` — kill switch, run state/budget, agent active, tenant alignment, autonomy, capability, risk ceiling — 10 fail-closed reasons + the admit → step → policy flow |
+
+An agent may only ever *propose*, never execute. Before a proposal reaches the
+policy engine or the tool broker it must be admitted: `admitProposal` is a pure,
+fail-closed decision that checks the run (active, budget), the agent (registered,
+active, tenant-aligned, autonomy permits proposing) and the proposal (action
+type within capability, risk within ceiling). Admission performs no side effects
+— the caller records the run step and forwards an admitted proposal onward.
+
 ## Commands
 
 ```bash
@@ -56,6 +71,6 @@ opa test apps/control-plane/policies -v               # rego policy unit tests
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gates 0, 1 and 2 CLOSED — app + database + policy + products/evidence
-layers tested (71 native `node --test` cases + 6 `opa test`). Gates 3–7 per
-`../../docs/ARCHITECTURE.md`.
+**Status:** Gates 0–3 CLOSED — app + database + policy + products/evidence +
+agent control plane tested (94 native `node --test` cases + 6 `opa test`).
+Gates 4–7 per `../../docs/ARCHITECTURE.md`.

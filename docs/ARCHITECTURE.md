@@ -92,3 +92,15 @@ never receives the underlying credential.
   published passport is immutable (WITHDRAWN is the only onward transition).
   `hasRequiredEvidence()` feeds the policy engine's evidence gate directly.
   Control-plane suite now 71 native `node --test` cases + 6 rego cases.
+- **Milestone 1 — Gate 3 (agent control plane): CLOSED.**
+  Agents may only *propose*, never execute. `src/agents/agent-registry.ts` fixes
+  each agent's bounded-autonomy envelope at registration (allowed action types,
+  risk ceiling, autonomy level, per-run step budget; capabilities frozen,
+  status suspendable, tenant-scoped). `src/agents/agent-run.ts` is a bounded run
+  lifecycle (ACTIVE + step budget → COMPLETED/FAILED/ABORTED; over-budget and
+  post-terminal steps fail closed). `src/agents/admission.ts` is the gate:
+  `admitProposal` is a pure, fail-closed decision (kill switch, run state/budget,
+  agent active, tenant alignment across proposal/run/agent, autonomy, capability,
+  risk ceiling) that must pass before a proposal reaches the policy engine or the
+  tool broker. Control-plane suite now 94 native `node --test` cases + 6 rego
+  cases.

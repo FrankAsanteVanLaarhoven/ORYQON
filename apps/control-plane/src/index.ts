@@ -16,3 +16,7 @@ export * from './auth/step-up.ts';
 // Gate 2 — products & evidence.
 export * from './products/evidence-store.ts';
 export * from './products/product-passport.ts';
+// Gate 3 — agent control plane.
+export * from './agents/agent-registry.ts';
+export * from './agents/agent-run.ts';
+export * from './agents/admission.ts';
