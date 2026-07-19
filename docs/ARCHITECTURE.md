@@ -72,8 +72,8 @@ never receives the underlying credential.
   (`apps/control-plane/db/migrations/0001_tenant_rls.sql`) is proven by
   `db/tests/rls_cross_tenant.sql` against PostgreSQL 16 — cross-tenant isolation,
   fail-closed writes, and the idempotency unique constraint — run in CI
-  (`.github/workflows/ci.yml`). Gates 1–7 remain ahead. No connector, model
-  provider or live execution path exists yet.
+  (`.github/workflows/ci.yml`). (Gates 1–7 followed; see below.) No live
+  connector, model provider or live execution path exists yet.
 - **Milestone 1 — Gate 1 (profiles, settings, policy): CLOSED.**
   Deterministic hierarchical settings resolution; a default-deny policy engine
   with immutable, versioned policy bundles (activation deep-freezes); enterprise
@@ -134,3 +134,14 @@ never receives the underlying credential.
   `(metric, dimension, value)` events and answers count/breakdown/rate queries,
   with writes and reads confined to the active tenant (cross-tenant writes fail
   closed). Control-plane suite now 139 native `node --test` cases + 6 rego cases.
+- **Milestone 1 — Gate 7 (enterprise release readiness): CLOSED.**
+  Deterministic and offline. `src/enterprise/readiness.ts` is a fail-closed
+  posture check over declared configuration — data residency within the
+  permitted set, SSO enforced, customer-managed keys, audit export enabled, RBAC
+  propose/approve separation, and a minimum assurance level; each unmet
+  requirement is a specific gap and no configuration fails closed.
+  `src/enterprise/audit-export.ts` verifies a hash chain (prevDigest linkage +
+  monotonic sequence) and produces a content-addressed, tenant-scoped export
+  manifest (cross-tenant entries fail closed; cryptographic signing is a later
+  authorized step). Control-plane suite now 153 native `node --test` cases + 6
+  rego cases. **The full gate ladder (0–7) is complete.**

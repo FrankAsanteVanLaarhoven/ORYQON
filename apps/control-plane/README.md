@@ -1,7 +1,7 @@
 # @oryqon/control-plane
 
-TypeScript control plane. **Gates 0–6 are implemented and tested**; enterprise
-release readiness (Gate 7) is the remaining gate.
+TypeScript control plane. **All eight gates (0–7) are implemented and tested** —
+the full gate ladder is complete.
 
 ## Gate 0 — security foundation
 
@@ -104,6 +104,19 @@ count/breakdown/rate queries, all confined to the active tenant. Time-bucketing
 takes an explicit origin and window, so a rollup is reproducible. No live data
 source is involved.
 
+## Gate 7 — enterprise release readiness
+
+| Concern | Module | Proof |
+| --- | --- | --- |
+| Deployment readiness | `src/enterprise/readiness.ts` | `test/readiness.test.ts` — fail-closed posture check over residency, SSO, CMK, audit export, RBAC separation and minimum AAL; each unmet requirement is a specific gap; no config fails closed |
+| Audit export | `src/enterprise/audit-export.ts` | `test/audit-export.test.ts` — hash-chain continuity verification, content-addressed deterministic export, tenant-scoped (cross-tenant entries fail closed) |
+
+Readiness is a deterministic evaluation of declared configuration — nothing
+external is contacted and any unmet requirement blocks readiness. Audit export
+verifies the hash chain (prevDigest linkage + monotonic sequence) and produces a
+content-addressed manifest confined to the active tenant; cryptographic signing
+of the export is a later, separately-authorized step.
+
 ## Commands
 
 ```bash
@@ -114,7 +127,8 @@ opa test apps/control-plane/policies -v               # rego policy unit tests
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gates 0–6 CLOSED — app + database + policy + products/evidence +
-agent control plane + campaigns/approvals + connectors (fail-closed) + analytics
-tested (139 native `node --test` cases + 6 `opa test`). Gate 7 (enterprise
-release readiness) per `../../docs/ARCHITECTURE.md`.
+**Status:** Gates 0–7 CLOSED — the full gate ladder is complete. App + database +
+policy + products/evidence + agent control plane + campaigns/approvals +
+connectors (fail-closed) + analytics + enterprise readiness tested (153 native
+`node --test` cases + 6 `opa test`). No production dependencies; Node built-ins
+only.

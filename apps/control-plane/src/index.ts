@@ -30,3 +30,6 @@ export * from './connectors/dispatch.ts';
 // Gate 6 — analytics (deterministic, tenant-scoped rollups).
 export * from './analytics/rollup.ts';
 export * from './analytics/metrics-store.ts';
+// Gate 7 — enterprise release readiness.
+export * from './enterprise/readiness.ts';
+export * from './enterprise/audit-export.ts';
