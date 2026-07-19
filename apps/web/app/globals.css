@@ -654,3 +654,333 @@ canvas {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================================
+   Forensic inside — the operating console. Solid surfaces, minimal blur.
+   ========================================================================== */
+
+/* Live Command Centre ----------------------------------------------------- */
+.console {
+  margin-top: 48px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-primary);
+  display: grid;
+  grid-template-columns: 208px 1fr;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+}
+
+.console-nav {
+  border-right: 1px solid var(--edge);
+  padding: 12px 0;
+  background: var(--surface-void);
+}
+
+.console-nav .brandline {
+  padding: 6px 18px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--edge);
+  margin-bottom: 8px;
+}
+
+.console-nav a {
+  display: block;
+  padding: 9px 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease;
+}
+
+.console-nav a:hover {
+  color: var(--text-primary);
+}
+
+.console-nav a.active {
+  color: var(--text-primary);
+  border-left-color: var(--signal-active);
+  background: rgba(138, 216, 255, 0.05);
+}
+
+.console-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.console-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--edge);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.console-topbar .clock {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.topology {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 26px 20px;
+  border-bottom: 1px solid var(--edge);
+}
+
+.topo-node {
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--surface-elevated);
+  min-width: 118px;
+}
+
+.topo-node .t {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.topo-node .s {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.topo-link {
+  flex: 1 1 28px;
+  min-width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(138, 216, 255, 0.55), transparent);
+}
+
+.console-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.console-panel {
+  padding: 18px 20px;
+}
+
+.console-panel + .console-panel {
+  border-left: 1px solid var(--edge);
+}
+
+.console-panel h4 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.op-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--edge);
+  font-size: 13px;
+}
+
+.op-row:last-child {
+  border-bottom: 0;
+}
+
+.op-row .count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  min-width: 26px;
+}
+
+.op-row .label {
+  color: var(--text-secondary);
+}
+
+.op-row .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-left: auto;
+  flex: none;
+}
+
+.op-row .dot.active { background: var(--signal-active); }
+.op-row .dot.pending { background: var(--signal-warning); }
+.op-row .dot.warning { background: var(--signal-warning); }
+.op-row .dot.critical { background: var(--signal-critical); }
+.op-row .dot.verified { background: var(--signal-verified); }
+
+/* Product Passport -------------------------------------------------------- */
+.passport {
+  margin-top: 48px;
+  max-width: 760px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: var(--surface-primary);
+  overflow: hidden;
+}
+
+.passport-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--edge);
+}
+
+.passport-head .name {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.passport-head .sku {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.passport-body {
+  padding: 6px 22px 20px;
+}
+
+.passport-row {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--edge);
+}
+
+.passport-row:last-child {
+  border-bottom: 0;
+}
+
+.passport-row .k {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.claim {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.claim .ev {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--signal-verified);
+  white-space: nowrap;
+}
+
+.channel-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.channel-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--edge);
+  border-radius: 5px;
+  color: var(--text-secondary);
+}
+
+/* Enterprise deployment --------------------------------------------------- */
+.enterprise-grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1px;
+  background: var(--edge);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.ent-tile {
+  background: var(--surface-primary);
+  padding: 24px 22px;
+}
+
+.ent-tile .badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal-active);
+}
+
+.ent-tile .t {
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ent-tile .d {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Console responsive ------------------------------------------------------ */
+@media (max-width: 760px) {
+  .console {
+    grid-template-columns: 1fr;
+  }
+  .console-nav {
+    display: flex;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--edge);
+    padding: 0;
+  }
+  .console-nav .brandline {
+    display: none;
+  }
+  .console-nav a {
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .console-nav a.active {
+    border-left: 0;
+    border-bottom-color: var(--signal-active);
+  }
+  .console-panels {
+    grid-template-columns: 1fr;
+  }
+  .console-panel + .console-panel {
+    border-left: 0;
+    border-top: 1px solid var(--edge);
+  }
+}
