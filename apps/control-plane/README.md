@@ -1,8 +1,7 @@
 # @oryqon/control-plane
 
-TypeScript control plane. **Gates 0–5 are implemented and tested**; the rest of
-the control plane (analytics, enterprise release readiness) follows in later
-gates.
+TypeScript control plane. **Gates 0–6 are implemented and tested**; enterprise
+release readiness (Gate 7) is the remaining gate.
 
 ## Gate 0 — security foundation
 
@@ -92,6 +91,19 @@ the same interface, execute through the tool broker (credential resolved inside
 the handler closure), and run only under an explicit, authorized live-execution
 mode with real credentials.
 
+## Gate 6 — analytics
+
+| Concern | Module | Proof |
+| --- | --- | --- |
+| Deterministic rollups | `src/analytics/rollup.ts` | `test/rollup.test.ts` — count-by, divide-by-zero-safe ratio, decision mix, stable top-n, fixed-window bucketing by a supplied origin (no wall clock) |
+| Tenant-scoped metrics | `src/analytics/metrics-store.ts` | `test/metrics-store.test.ts` — count/breakdown/total/rate; cross-tenant writes fail closed and reads are isolated |
+
+Analytics are deterministic and offline: the store ingests the typed
+`(metric, dimension, value)` events the control plane emits and answers
+count/breakdown/rate queries, all confined to the active tenant. Time-bucketing
+takes an explicit origin and window, so a rollup is reproducible. No live data
+source is involved.
+
 ## Commands
 
 ```bash
@@ -102,7 +114,7 @@ opa test apps/control-plane/policies -v               # rego policy unit tests
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gates 0–5 CLOSED — app + database + policy + products/evidence +
-agent control plane + campaigns/approvals + connectors (fail-closed, no live
-execution) tested (125 native `node --test` cases + 6 `opa test`). Gates 6–7 per
-`../../docs/ARCHITECTURE.md`.
+**Status:** Gates 0–6 CLOSED — app + database + policy + products/evidence +
+agent control plane + campaigns/approvals + connectors (fail-closed) + analytics
+tested (139 native `node --test` cases + 6 `opa test`). Gate 7 (enterprise
+release readiness) per `../../docs/ARCHITECTURE.md`.

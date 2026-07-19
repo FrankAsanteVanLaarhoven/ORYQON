@@ -126,3 +126,11 @@ never receives the underlying credential.
   live connector would implement the same interface, execute via the tool broker,
   and run only under explicit authorization with real credentials. Control-plane
   suite now 125 native `node --test` cases + 6 rego cases.
+- **Milestone 1 — Gate 6 (analytics): CLOSED.**
+  Deterministic, offline rollups. `src/analytics/rollup.ts` provides pure
+  aggregation (count-by, divide-by-zero-safe ratios, decision mix, stable top-n,
+  and fixed-window bucketing keyed to a supplied origin rather than a wall clock,
+  so results are reproducible). `src/analytics/metrics-store.ts` ingests typed
+  `(metric, dimension, value)` events and answers count/breakdown/rate queries,
+  with writes and reads confined to the active tenant (cross-tenant writes fail
+  closed). Control-plane suite now 139 native `node --test` cases + 6 rego cases.

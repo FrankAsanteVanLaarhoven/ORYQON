@@ -27,3 +27,6 @@ export * from './approvals/approval.ts';
 export * from './connectors/connector.ts';
 export * from './connectors/connector-registry.ts';
 export * from './connectors/dispatch.ts';
+// Gate 6 — analytics (deterministic, tenant-scoped rollups).
+export * from './analytics/rollup.ts';
+export * from './analytics/metrics-store.ts';
