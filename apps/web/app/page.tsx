@@ -157,7 +157,7 @@ export default function Home() {
                 and human approval.
               </p>
               <div className="cta-row">
-                <a className="btn btn-primary" href="#request-demo">
+                <a className="btn btn-primary" href="/console">
                   Enter the platform
                 </a>
                 <a className="btn btn-ghost" href="/theater">
