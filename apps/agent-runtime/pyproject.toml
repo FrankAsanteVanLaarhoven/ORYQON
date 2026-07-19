@@ -1,0 +1,18 @@
+[project]
+name = "oryqon-agent-runtime"
+version = "0.0.0"
+description = "ORYQON agent runtime — reasoning and typed tool-call proposals; no execution, no credentials."
+authors = [{ name = "Frank Asante Van Laarhoven", email = "frankleroyvan@gmail.com" }]
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

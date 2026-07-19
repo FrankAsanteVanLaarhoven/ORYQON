@@ -23,6 +23,7 @@ const SKIP_DIRS = new Set([
 const TEXT_EXT = new Set([
   '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json', '.css', '.scss',
   '.md', '.mdx', '.html', '.svg', '.txt', '.yml', '.yaml', '.toml',
+  '.py', '.sql',
 ]);
 
 // Filenames that are default framework logo assets — banned outright.

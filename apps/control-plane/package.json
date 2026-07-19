@@ -1,0 +1,17 @@
+{
+  "name": "@oryqon/control-plane",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ORYQON control plane — Gate 0 security foundation (tenant isolation, SSRF defence, idempotency, tool broker).",
+  "author": "Frank Asante Van Laarhoven <frankleroyvan@gmail.com>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}

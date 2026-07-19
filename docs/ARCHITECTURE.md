@@ -63,6 +63,13 @@ never receives the underlying credential.
 
 ## Current status
 
-**Milestone 0 — foundation + public cinematic hero.** `apps/web` is live and
-branding-clean; `control-plane`, `agent-runtime` and `packages` are scaffolded
-as the next milestone. No backend service is claimed as implemented yet.
+- **Milestone 0 — public site.** `apps/web` is live and branding-clean.
+- **Milestone 1 — Gate 0 (secure foundation): implemented and tested.**
+  `apps/control-plane` provides tenant isolation (app-layer, fail-closed),
+  SSRF-safe URL validation, durable idempotency, and the deterministic tool
+  broker — 27 native `node --test` cases. `apps/agent-runtime` provides the
+  proposal-only agent boundary (pytest). Database-level RLS
+  (`apps/control-plane/db/migrations/0001_tenant_rls.sql`) is written but requires
+  a live PostgreSQL to verify — **Gate 0 is not fully closed until that runs in
+  CI**. Gates 1–7 remain ahead. No connector, model provider or live execution
+  path exists yet.

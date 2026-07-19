@@ -14,8 +14,10 @@
     "build": "npm run build --workspace @oryqon/web",
     "start": "npm run start --workspace @oryqon/web",
     "lint": "npm run lint --workspace @oryqon/web",
+    "test": "npm run test --workspace @oryqon/control-plane",
+    "typecheck": "npm run typecheck --workspace @oryqon/control-plane",
     "check:branding": "node scripts/check-branding.mjs",
-    "check": "npm run check:branding && npm run build"
+    "check": "npm run check:branding && npm run test && npm run build"
   },
   "engines": {
     "node": ">=20"
