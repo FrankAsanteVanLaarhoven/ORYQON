@@ -20,3 +20,6 @@ export * from './products/product-passport.ts';
 export * from './agents/agent-registry.ts';
 export * from './agents/agent-run.ts';
 export * from './agents/admission.ts';
+// Gate 4 — campaigns & approvals.
+export * from './campaigns/campaign.ts';
+export * from './approvals/approval.ts';

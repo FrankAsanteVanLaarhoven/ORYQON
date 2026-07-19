@@ -104,3 +104,13 @@ never receives the underlying credential.
   risk ceiling) that must pass before a proposal reaches the policy engine or the
   tool broker. Control-plane suite now 94 native `node --test` cases + 6 rego
   cases.
+- **Milestone 1 — Gate 4 (campaigns & approvals): CLOSED.**
+  A campaign aggregate (`src/campaigns/campaign.ts`) groups proposals toward one
+  objective through a guarded lifecycle (DRAFT → ACTIVE ↔ PAUSED → COMPLETED;
+  CANCELLED from any non-terminal state; cannot activate empty). The approval
+  workflow (`src/approvals/approval.ts`) turns a policy REVIEW into a pending
+  request and, on decision, reuses Gate-1 RBAC (the approver must hold
+  `campaign.approve` and cannot approve their own proposal) and Gate-1 step-up
+  (privileged/high-risk actions need a fresh, sufficiently strong assertion) to
+  advance the ActionProposal from REVIEW to AUTHORISED. Control-plane suite now
+  110 native `node --test` cases + 6 rego cases.

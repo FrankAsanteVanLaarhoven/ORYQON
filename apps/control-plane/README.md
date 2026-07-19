@@ -1,7 +1,7 @@
 # @oryqon/control-plane
 
-TypeScript control plane. **Gates 0–3 are implemented and tested**; the rest of
-the control plane (campaigns, connectors, real-time events) follows in later
+TypeScript control plane. **Gates 0–4 are implemented and tested**; the rest of
+the control plane (connectors, analytics, enterprise release) follows in later
 gates.
 
 ## Gate 0 — security foundation
@@ -61,6 +61,20 @@ active, tenant-aligned, autonomy permits proposing) and the proposal (action
 type within capability, risk within ceiling). Admission performs no side effects
 — the caller records the run step and forwards an admitted proposal onward.
 
+## Gate 4 — campaigns & approvals
+
+| Concern | Module | Proof |
+| --- | --- | --- |
+| Campaign aggregate | `src/campaigns/campaign.ts` | `test/campaign.test.ts` — DRAFT → ACTIVE ↔ PAUSED → COMPLETED / CANCELLED; cannot activate empty; terminal is final; tenant-scoped |
+| Human authorization | `src/approvals/approval.ts` | `test/approval.test.ts` — approver must hold `campaign.approve`, cannot self-approve, and must clear step-up for privileged/high-risk actions |
+| Approval queue | `src/approvals/approval.ts` (`ApprovalStore`) | `test/approval.test.ts` — tenant-scoped pending list; cross-tenant writes fail closed |
+
+When policy returns REVIEW an approval request is raised and held pending. A
+decision reuses the Gate-1 controls directly: RBAC (`campaign.approve`, with
+self-approval blocked) and step-up (privileged/high-risk actions need a fresh,
+sufficiently strong assertion). Authorising advances the ActionProposal from
+REVIEW to AUTHORISED; every decision is immutable and tenant-bound.
+
 ## Commands
 
 ```bash
@@ -71,6 +85,6 @@ opa test apps/control-plane/policies -v               # rego policy unit tests
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gates 0–3 CLOSED — app + database + policy + products/evidence +
-agent control plane tested (94 native `node --test` cases + 6 `opa test`).
-Gates 4–7 per `../../docs/ARCHITECTURE.md`.
+**Status:** Gates 0–4 CLOSED — app + database + policy + products/evidence +
+agent control plane + campaigns/approvals tested (110 native `node --test` cases
++ 6 `opa test`). Gates 5–7 per `../../docs/ARCHITECTURE.md`.
