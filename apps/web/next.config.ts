@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // No framework identity header in responses.
   poweredByHeader: false,
+  // No framework dev-tools indicator (the corner logo) in development.
+  devIndicators: false,
   // Pin the workspace root to this monorepo (an unrelated lockfile exists
   // higher up the filesystem).
   turbopack: {
