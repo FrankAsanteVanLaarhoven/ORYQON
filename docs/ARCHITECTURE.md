@@ -74,3 +74,11 @@ never receives the underlying credential.
   fail-closed writes, and the idempotency unique constraint — run in CI
   (`.github/workflows/ci.yml`). Gates 1–7 remain ahead. No connector, model
   provider or live execution path exists yet.
+- **Milestone 1 — Gate 1 (profiles, settings, policy): CLOSED.**
+  Deterministic hierarchical settings resolution; a default-deny policy engine
+  with immutable, versioned policy bundles (activation deep-freezes); enterprise
+  role separation (propose ≠ approve, self-approval blocked, `db.admin`
+  disjoint); and step-up authentication for privileged actions. The externalized
+  OPA bundle (`apps/control-plane/policies/oryqon.rego`) mirrors the in-process
+  engine and is unit-tested with `opa test` in CI. Control-plane suite: 52 native
+  `node --test` cases + 6 rego cases.

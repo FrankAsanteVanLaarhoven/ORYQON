@@ -52,3 +52,15 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/oryqon
         run: bash apps/control-plane/db/test-rls.sh
+
+  policy:
+    name: OPA policy tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OPA
+        run: |
+          curl -fsSL -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa
+      - name: opa test
+        run: ./opa test apps/control-plane/policies -v
