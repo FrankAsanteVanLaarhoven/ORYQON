@@ -14,8 +14,8 @@ real-time events) follows in later gates.
 | Tool broker | `src/broker/tool-broker.ts` | `test/tool-broker.test.ts` — allowlist/permit/approval/kill-switch; credential never reaches the agent |
 
 Database-level RLS (defence in depth) is in `db/migrations/0001_tenant_rls.sql`
-— see `db/README.md`; it requires a live PostgreSQL to verify and is not yet run
-in CI.
+and **verified** by `db/tests/rls_cross_tenant.sql` against PostgreSQL 16, run in
+CI (`.github/workflows/ci.yml`) — see `db/README.md`.
 
 ## Commands
 
@@ -26,4 +26,5 @@ npm run typecheck --workspace @oryqon/control-plane   # tsc --noEmit
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gate 0 implemented + tested. Gates 1–7 per `../../docs/ARCHITECTURE.md`.
+**Status:** Gate 0 CLOSED — app + database layers tested. Gates 1–7 per
+`../../docs/ARCHITECTURE.md`.

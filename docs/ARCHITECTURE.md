@@ -64,12 +64,13 @@ never receives the underlying credential.
 ## Current status
 
 - **Milestone 0 — public site.** `apps/web` is live and branding-clean.
-- **Milestone 1 — Gate 0 (secure foundation): implemented and tested.**
+- **Milestone 1 — Gate 0 (secure foundation): CLOSED.**
   `apps/control-plane` provides tenant isolation (app-layer, fail-closed),
   SSRF-safe URL validation, durable idempotency, and the deterministic tool
   broker — 27 native `node --test` cases. `apps/agent-runtime` provides the
   proposal-only agent boundary (pytest). Database-level RLS
-  (`apps/control-plane/db/migrations/0001_tenant_rls.sql`) is written but requires
-  a live PostgreSQL to verify — **Gate 0 is not fully closed until that runs in
-  CI**. Gates 1–7 remain ahead. No connector, model provider or live execution
-  path exists yet.
+  (`apps/control-plane/db/migrations/0001_tenant_rls.sql`) is proven by
+  `db/tests/rls_cross_tenant.sql` against PostgreSQL 16 — cross-tenant isolation,
+  fail-closed writes, and the idempotency unique constraint — run in CI
+  (`.github/workflows/ci.yml`). Gates 1–7 remain ahead. No connector, model
+  provider or live execution path exists yet.

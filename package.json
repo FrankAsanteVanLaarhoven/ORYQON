@@ -15,6 +15,7 @@
     "start": "npm run start --workspace @oryqon/web",
     "lint": "npm run lint --workspace @oryqon/web",
     "test": "npm run test --workspace @oryqon/control-plane",
+    "test:rls": "bash apps/control-plane/db/test-rls.sh",
     "typecheck": "npm run typecheck --workspace @oryqon/control-plane",
     "check:branding": "node scripts/check-branding.mjs",
     "check": "npm run check:branding && npm run test && npm run build"

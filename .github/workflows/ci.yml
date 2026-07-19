@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: branding, tests, typecheck, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Branding guard + control-plane tests + web build
+        run: npm run check
+      - name: Control-plane typecheck
+        run: npm run typecheck
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Agent-runtime boundary tests
+        run: |
+          python -m pip install --upgrade pip pytest
+          cd apps/agent-runtime && python -m pytest -q
+
+  rls:
+    name: Gate 0 cross-tenant RLS
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: oryqon
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply migration and run cross-tenant test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/oryqon
+        run: bash apps/control-plane/db/test-rls.sh
