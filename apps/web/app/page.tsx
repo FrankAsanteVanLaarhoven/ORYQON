@@ -160,7 +160,7 @@ export default function Home() {
                 <a className="btn btn-primary" href="#request-demo">
                   Enter the platform
                 </a>
-                <a className="btn btn-ghost" href="#operating-model">
+                <a className="btn btn-ghost" href="/theater">
                   Watch system film
                 </a>
               </div>
