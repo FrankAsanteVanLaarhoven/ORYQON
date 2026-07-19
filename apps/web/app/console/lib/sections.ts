@@ -1,4 +1,6 @@
-import type { Cell, SectionDef, StreamLine, Tone } from './types';
+import type { Cell, QuotaRow, SectionDef, StreamLine, Tone } from './types';
+import { COMPETITORS, OUR_PRICES, SUPPLY_LANES, TARIFF_COUNTRIES } from './finance/data';
+import { modeledTariff } from './finance/adapters';
 
 /* cell constructors */
 const T = (v: string): Cell => ({ t: 'text', v });
@@ -23,6 +25,43 @@ const seedAudit: StreamLine[] = [
   { ts: '14:22:01', actor: 'agent.evidence', text: 'evidence validated', tone: 'verified', code: '1c8e → 4f9a' },
   { ts: '14:21:55', actor: 'ops.pricing', text: 'receipt signed', tone: 'verified', code: '77aa → 1c8e' },
 ];
+
+// --- rows generated from the modeled trade/finance data (single source) ---
+const competitorRows: Cell[][] = COMPETITORS.map((c) => [
+  T(c.name),
+  M(c.sku),
+  N('£' + c.price),
+  C(c.deltaPct >= 0 ? 'verified' : 'review', (c.deltaPct > 0 ? '+' : '') + c.deltaPct + '%'),
+  C(c.stock === 'in' ? 'nominal' : c.stock === 'low' ? 'awaiting' : 'blocked', c.stock),
+]);
+
+const positionRows: QuotaRow[] = Object.keys(OUR_PRICES).map((sku) => {
+  const comps = COMPETITORS.filter((c) => c.sku === sku);
+  const avg = comps.length ? comps.reduce((a, c) => a + c.price, 0) / comps.length : OUR_PRICES[sku];
+  const idx = Math.round((OUR_PRICES[sku] / avg) * 100);
+  return { label: sku, pct: Math.min(100, idx), value: idx + ' idx', warn: idx > 105 };
+});
+
+const laneRows: Cell[][] = SUPPLY_LANES.map((l) => [
+  T(l.supplier),
+  M(l.origin + ' · ' + l.mode),
+  N(l.leadDays + 'd'),
+  C(l.risk === 'low' ? 'verified' : l.risk === 'med' ? 'awaiting' : 'blocked', l.risk),
+]);
+
+const leadMoqRows: Cell[][] = SUPPLY_LANES.map((l) => [T(l.supplier), M('lead ' + l.leadDays + 'd'), N('MOQ ' + l.moq)]);
+
+const exposureRows: QuotaRow[] = SUPPLY_LANES.map((l) => ({
+  label: l.supplier,
+  pct: Math.min(100, l.tariffExposurePct * 6),
+  value: l.tariffExposurePct + '%',
+  warn: l.tariffExposurePct >= 10,
+}));
+
+const tariffRows: Cell[][] = TARIFF_COUNTRIES.map((country) => {
+  const t = modeledTariff.lookup(country, 'Apparel & textiles');
+  return [T(country), M('duty ' + t.dutyPct + '%'), C('nominal', 'VAT ' + t.vatPct + '%')];
+});
 
 export const SECTIONS: SectionDef[] = [
   {
@@ -345,6 +384,67 @@ export const SECTIONS: SectionDef[] = [
         { label: 'Encryption at rest', pct: 100, value: '100%' },
         { label: 'Secrets rotation', pct: 88, value: '88%' },
         { label: 'Least-privilege', pct: 92, value: '92%' },
+      ] } },
+    ],
+  },
+
+  {
+    key: 'competitors',
+    title: 'Competitors',
+    panels: [
+      { id: 'monitor', title: 'Competitor Price Monitor', meta: 'modeled', w: 7, h: 244, body: { kind: 'rows', cols: '1fr auto auto auto auto', rows: competitorRows } },
+      { id: 'position', title: 'Price Position · vs market', meta: 'modeled · 100=parity', w: 5, h: 244, body: { kind: 'quotas', rows: positionRows } },
+      { id: 'promo', title: 'Promo Watch', meta: 'modeled', w: 12, h: 180, body: { kind: 'rows', cols: '1fr auto auto', rows: [
+        [T('Northwind · 15% autumn sale'), M('ends 31 Aug'), C('review', 'active')],
+        [T('Vertex · clearance Rain Shell'), M('while stocks'), C('review', 'active')],
+        [T('Summit & Co · bundle offer'), M('ongoing'), C('awaiting', 'watch')],
+      ] } },
+    ],
+  },
+
+  {
+    key: 'supply',
+    title: 'Supply Chain',
+    panels: [
+      { id: 'lanes', title: 'Supplier Lanes', meta: 'modeled', w: 7, h: 244, body: { kind: 'rows', cols: '1fr auto auto auto', rows: laneRows } },
+      { id: 'leadmoq', title: 'Lead-Time & MOQ', meta: 'modeled', w: 5, h: 244, body: { kind: 'rows', cols: '1fr auto auto', rows: leadMoqRows } },
+      { id: 'exposure', title: 'Tariff Exposure by Lane', meta: 'modeled', w: 12, h: 190, body: { kind: 'quotas', rows: exposureRows } },
+    ],
+  },
+
+  {
+    key: 'trade',
+    title: 'Trade',
+    panels: [
+      { id: 'duty', title: 'Import / Export Duty', w: 6, h: 366, body: { kind: 'duty' } },
+      { id: 'tariffs', title: 'Tariffs by Country', meta: 'modeled · apparel', w: 6, h: 300, body: { kind: 'rows', cols: '1fr auto auto', rows: tariffRows } },
+      { id: 'compliance', title: 'Compliance Flags', meta: 'modeled', w: 12, h: 180, body: { kind: 'rows', cols: '1fr auto', rows: [
+        [T('Restricted-goods screen'), C('verified', 'clear')],
+        [T('Origin documentation'), C('verified', 'complete')],
+        [T('Dual-use / export control'), C('nominal', 'n/a')],
+        [T('Preferential origin (EU)'), C('awaiting', 'review')],
+      ] } },
+    ],
+  },
+
+  {
+    key: 'finance',
+    title: 'Finance',
+    panels: [
+      { id: 'fx-convert', title: 'Currency Converter', w: 4, h: 300, body: { kind: 'convert' } },
+      { id: 'fx-rates', title: 'FX Rates & Order Timing', w: 4, h: 300, body: { kind: 'fx' } },
+      { id: 'economics', title: 'Order Economics · MOQ / margin', w: 4, h: 366, body: { kind: 'economics' } },
+      { id: 'tax', title: 'Tax Compliance Alerts', meta: 'modeled', w: 6, h: 200, body: { kind: 'rows', cols: '1fr auto auto', rows: [
+        [T('UK VAT · return'), M('due 7 Aug'), C('awaiting', 'due soon')],
+        [T('EU OSS · registered'), M('quarterly'), C('verified', 'compliant')],
+        [T('US sales tax · nexus'), M('3 states'), C('review', 'review')],
+        [T('India GST'), M('monthly'), C('verified', 'compliant')],
+      ] } },
+      { id: 'advisory', title: 'Finance Advisory', meta: 'modeled', w: 6, h: 200, body: { kind: 'rows', cols: '1fr auto', rows: [
+        [T('CNY weak vs GBP — reorder China lanes now'), C('verified', 'act')],
+        [T('Trail Runner margin 41% below 45% target'), C('review', 'review')],
+        [T('Chennai lane 41d + high risk — dual-source'), C('awaiting', 'plan')],
+        [T('10% discount on Field Jacket gives up margin'), C('nominal', 'fyi')],
       ] } },
     ],
   },

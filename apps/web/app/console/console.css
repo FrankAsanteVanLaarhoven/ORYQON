@@ -182,6 +182,20 @@
 
 .oc-three { width: 100%; height: 100%; display: block; }
 
+/* ---------- finance / trade tools ---------- */
+.oc-tool { display: flex; flex-direction: column; gap: 10px; }
+.oc-field-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.oc-field { display: flex; flex-direction: column; gap: 4px; flex: 1 1 84px; min-width: 80px; }
+.oc-field > span { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.oc-input { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--edge); border-radius: 5px; color: var(--bone); font-family: var(--mono); font-size: 13px; padding: 7px 9px; }
+.oc-input:focus { outline: none; border-color: var(--cyan); }
+select.oc-input { cursor: pointer; }
+.oc-out-big { font-family: var(--sans); font-size: 30px; font-weight: 600; letter-spacing: -0.01em; color: var(--cyan); font-variant-numeric: tabular-nums; margin: 2px 0; }
+.oc-out-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; padding: 6px 0; border-bottom: 1px solid var(--edge); }
+.oc-out-line:last-of-type { border-bottom: 0; }
+.oc-out-line .v { font-variant-numeric: tabular-nums; color: var(--bone); font-weight: 600; }
+.oc-badge-modeled { align-self: flex-start; margin-top: 2px; font-size: 9px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(241, 184, 91, 0.3); border-radius: 4px; padding: 3px 7px; }
+
 /* ---------- transient glass-wipe on section switch ---------- */
 .oc-glasswipe {
   position: fixed; inset: 0; z-index: 55; pointer-events: none;

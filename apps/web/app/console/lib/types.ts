@@ -64,13 +64,23 @@ export interface StreamBody {
 
 export interface ThreeBody { kind: 'three' }
 
+/** Interactive finance/trade tools — content is owned by the component. */
+export interface ConvertBody { kind: 'convert' }
+export interface DutyBody { kind: 'duty' }
+export interface EconomicsBody { kind: 'economics' }
+export interface FxBody { kind: 'fx' }
+
 export type PanelBody =
   | RowsBody
   | QuotasBody
   | KpisBody
   | GaugeBody
   | StreamBody
-  | ThreeBody;
+  | ThreeBody
+  | ConvertBody
+  | DutyBody
+  | EconomicsBody
+  | FxBody;
 
 export interface PanelDef {
   id: string;

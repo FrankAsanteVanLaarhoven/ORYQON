@@ -3,6 +3,10 @@ import Kpis from './Kpis';
 import Gauge from './Gauge';
 import Stream from './Stream';
 import ThreePanel from './ThreePanel';
+import CurrencyConverter from './finance/CurrencyConverter';
+import DutyCalculator from './finance/DutyCalculator';
+import OrderEconomics from './finance/OrderEconomics';
+import FxRatesPanel from './finance/FxRatesPanel';
 
 function CellView({ cell }: { cell: Cell }) {
   switch (cell.t) {
@@ -36,6 +40,14 @@ export default function PanelContent({ body }: { body: PanelBody }) {
       return <Gauge body={body} />;
     case 'three':
       return <ThreePanel />;
+    case 'convert':
+      return <CurrencyConverter />;
+    case 'duty':
+      return <DutyCalculator />;
+    case 'economics':
+      return <OrderEconomics />;
+    case 'fx':
+      return <FxRatesPanel />;
     case 'stream':
       return <Stream body={body} />;
     case 'quotas':
