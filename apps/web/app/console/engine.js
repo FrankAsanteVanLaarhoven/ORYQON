@@ -287,8 +287,8 @@ export function startConsole() {
   }
   function blip(kind){
     if(!audioReady||muted) return; var t=audio.currentTime; if(t-lastBlip<0.05) return; lastBlip=t;
-    var f = kind==="allow"?880 : kind==="ok"?990 : kind==="review"?587 : kind==="deny"?300 : 660;
-    var vol = kind==="deny"?0.05:0.03;
+    var f = kind==="allow"?880 : kind==="ok"?990 : kind==="review"?587 : kind==="deny"?300 : kind==="ui"?1320 : 660;
+    var vol = kind==="deny"?0.05 : kind==="ui"?0.018 : 0.03;
     var o=audio.createOscillator(); o.type= kind==="deny"?"triangle":"sine"; o.frequency.value=f;
     var g=audio.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+0.18);
     o.connect(g); g.connect(master); o.start(t); o.stop(t+0.2);
@@ -301,6 +301,43 @@ export function startConsole() {
   $("scrub").addEventListener("input", function(){
     var v=+this.value; $("scrubNow").textContent = v>=100? "live" : "T−"+Math.round((100-v)*0.6)+"m";
     $("scrubNow").style.color = v>=100? "var(--cyan)" : "var(--amber)";
+    blip("review");
+  });
+
+  // ---------- HUD interaction motion ----------
+  var appEl = document.querySelector(".app") || document.body;
+  var reticle = document.createElement("div"); reticle.className = "reticle";
+  reticle.innerHTML = '<span class="rx"></span><span class="ry"></span><span class="rb tl"></span><span class="rb tr"></span><span class="rb bl"></span><span class="rb br"></span>';
+  appEl.appendChild(reticle);
+  var navscanEl = document.createElement("div"); navscanEl.className = "navscan"; appEl.appendChild(navscanEl);
+  var glitchEl = document.createElement("div"); glitchEl.className = "glitchflash"; appEl.appendChild(glitchEl);
+  Array.prototype.forEach.call(document.querySelectorAll(".panel"), function(p){ var s=document.createElement("span"); s.className="scanbar"; p.appendChild(s); });
+
+  var mx=window.innerWidth/2, my=window.innerHeight/2, retX=mx, retY=my, retOn=false;
+  function interactive(t){ return !!(t && t.closest && t.closest("a, button, input, .node, .row")); }
+  var onMove = function(e){ mx=e.clientX; my=e.clientY; if(!retOn){ retOn=true; reticle.classList.add("on"); } reticle.classList.toggle("locked", interactive(e.target)); };
+  var onDown = function(){ reticle.classList.remove("pulse"); void reticle.offsetWidth; reticle.classList.add("pulse"); blip("ui"); };
+  document.addEventListener("mousemove", onMove);
+  document.addEventListener("mousedown", onDown);
+
+  function decode(elm, text){
+    if(!elm) return; var pool="ABCDEF0123456789/#>_", frames=14, f=0;
+    var iv=setInterval(function(){
+      f++; var out="";
+      for(var i=0;i<text.length;i++){ out += (i < text.length*(f/frames)) ? text[i] : pool[Math.floor(rnd()*pool.length)]; }
+      elm.textContent=out;
+      if(f>=frames){ clearInterval(iv); elm.textContent=text; }
+    }, 26);
+  }
+  function fire(elm, cls){ if(!elm) return; elm.classList.remove(cls); void elm.offsetWidth; elm.classList.add(cls); }
+
+  var crumbEl = document.querySelector(".crumb b");
+  document.getElementById("nav").addEventListener("click", function(e){
+    e.preventDefault(); var a = e.target.closest("a"); if(!a) return;
+    var links=this.querySelectorAll("a"); for(var i=0;i<links.length;i++) links[i].classList.remove("active");
+    a.classList.add("active");
+    if(crumbEl) decode(crumbEl, a.textContent.trim());
+    fire(navscanEl, "go"); blip("allow");
   });
 
   // ---------- render + intervals ----------
@@ -317,6 +354,7 @@ export function startConsole() {
     timers.push(setInterval(driftChannels, 1600));
     timers.push(setInterval(tickTargets, 1000));
     timers.push(setInterval(renderOps, 4200));
+    timers.push(setInterval(function(){ if(rnd()<0.5) fire(glitchEl, "go"); }, 13000));
     timers.push(setInterval(function(){ if(rnd()<0.5 && approvals.length<7){ approvals.push(newApproval()); renderApprovals(); } }, 5200));
     timers.push(setInterval(function(){
       for(var i=0;i<approvals.length;i++){ approvals[i].exp -= 2; }
@@ -352,6 +390,9 @@ export function startConsole() {
     drawWave();
     // lifecycle flow bars
     for(var f=0; f<flows.length; f++){ flows[f].style.width = (30+ (Math.sin(t*1.2 + f)*0.5+0.5)*70) + "%"; }
+    // targeting reticle follows the pointer with easing
+    retX += (mx-retX)*Math.min(1,dt*16); retY += (my-retY)*Math.min(1,dt*16);
+    reticle.style.transform = "translate("+retX+"px,"+retY+"px)";
     rafId = requestAnimationFrame(frame);
   }
   // init spark baseline vals
@@ -383,6 +424,8 @@ export function startConsole() {
     cancelAnimationFrame(rafId);
     clearInterval(clockIv); clearInterval(bootIv);
     timers.forEach(function(t){ clearInterval(t); });
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mousedown', onDown);
     try { if (audio) audio.close(); } catch (e) {}
     document.body.style.overflow = prevOverflow;
   };
