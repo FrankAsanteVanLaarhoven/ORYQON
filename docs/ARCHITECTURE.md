@@ -114,3 +114,15 @@ never receives the underlying credential.
   (privileged/high-risk actions need a fresh, sufficiently strong assertion) to
   advance the ActionProposal from REVIEW to AUTHORISED. Control-plane suite now
   110 native `node --test` cases + 6 rego cases.
+- **Milestone 1 — Gate 5 (official connectors): CLOSED, interface-first.**
+  Connectors are governed channel adapters and the only components that could
+  touch an external system — and none does.
+  `src/connectors/connector-registry.ts` holds a credential *reference* (never a
+  secret; inline secrets are rejected), starts every connector DISCONNECTED, and
+  treats REVOKED as terminal. `src/connectors/dispatch.ts` admits a request (kill
+  switch, connected, tenant, capability) and then applies a fail-closed
+  live-execution guard that is OFF by default; even opted in, the shipped
+  `NoopConnector` returns NOT_EXECUTED, so no external side effect can occur. A
+  live connector would implement the same interface, execute via the tool broker,
+  and run only under explicit authorization with real credentials. Control-plane
+  suite now 125 native `node --test` cases + 6 rego cases.

@@ -23,3 +23,7 @@ export * from './agents/admission.ts';
 // Gate 4 — campaigns & approvals.
 export * from './campaigns/campaign.ts';
 export * from './approvals/approval.ts';
+// Gate 5 — official connectors (interface-first, fail-closed; no live execution).
+export * from './connectors/connector.ts';
+export * from './connectors/connector-registry.ts';
+export * from './connectors/dispatch.ts';

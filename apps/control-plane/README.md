@@ -1,7 +1,7 @@
 # @oryqon/control-plane
 
-TypeScript control plane. **Gates 0–4 are implemented and tested**; the rest of
-the control plane (connectors, analytics, enterprise release) follows in later
+TypeScript control plane. **Gates 0–5 are implemented and tested**; the rest of
+the control plane (analytics, enterprise release readiness) follows in later
 gates.
 
 ## Gate 0 — security foundation
@@ -75,6 +75,23 @@ self-approval blocked) and step-up (privileged/high-risk actions need a fresh,
 sufficiently strong assertion). Authorising advances the ActionProposal from
 REVIEW to AUTHORISED; every decision is immutable and tenant-bound.
 
+## Gate 5 — official connectors (interface-first, fail-closed)
+
+| Concern | Module | Proof |
+| --- | --- | --- |
+| Connector contract | `src/connectors/connector.ts` | `test/connector-dispatch.test.ts` — the shipped `NoopConnector` performs no side effect and always reports NOT_EXECUTED |
+| Connector registry | `src/connectors/connector-registry.ts` | `test/connector-registry.test.ts` — credential *reference* only (inline secrets rejected), starts DISCONNECTED, REVOKED terminal, tenant-scoped |
+| Dispatch gate | `src/connectors/dispatch.ts` | `test/connector-dispatch.test.ts` — kill switch, connected, tenant, capability, and a fail-closed live-execution guard (off by default) |
+
+**No live execution path exists.** A connector holds only a credential
+reference, never a secret. Dispatch is gated, and the live-execution guard is
+OFF by default — an admitted request returns `LIVE_EXECUTION_DISABLED` without
+invoking anything. Even when a caller opts in, the only shipped connector is the
+`NoopConnector`, which returns `NOT_EXECUTED`. A real connector would implement
+the same interface, execute through the tool broker (credential resolved inside
+the handler closure), and run only under an explicit, authorized live-execution
+mode with real credentials.
+
 ## Commands
 
 ```bash
@@ -85,6 +102,7 @@ opa test apps/control-plane/policies -v               # rego policy unit tests
 
 Runtime code uses only Node built-ins; there are no production dependencies.
 
-**Status:** Gates 0–4 CLOSED — app + database + policy + products/evidence +
-agent control plane + campaigns/approvals tested (110 native `node --test` cases
-+ 6 `opa test`). Gates 5–7 per `../../docs/ARCHITECTURE.md`.
+**Status:** Gates 0–5 CLOSED — app + database + policy + products/evidence +
+agent control plane + campaigns/approvals + connectors (fail-closed, no live
+execution) tested (125 native `node --test` cases + 6 `opa test`). Gates 6–7 per
+`../../docs/ARCHITECTURE.md`.
