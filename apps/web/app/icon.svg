@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ORYQON">
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="#0a0c0e"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="13.5" stroke="#ffffff" stroke-opacity="0.14"/>
+  <!-- Aperture "O" mark: an optical ring with a controlled break -->
+  <circle cx="32" cy="32" r="17" stroke="#8ad8ff" stroke-opacity="0.9" stroke-width="2.4" stroke-dasharray="76 14" stroke-dashoffset="19"/>
+  <circle cx="32" cy="32" r="9.5" stroke="#f4f5f2" stroke-opacity="0.55" stroke-width="1.6"/>
+  <circle cx="32" cy="32" r="2.2" fill="#8ad8ff"/>
+</svg>

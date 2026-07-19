@@ -1,0 +1,23 @@
+{
+  "name": "oryqon",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ORYQON — a verified command layer for operating products, campaigns, channels and revenue across the commercial internet.",
+  "author": "Frank Asante Van Laarhoven <frankleroyvan@gmail.com>",
+  "license": "UNLICENSED",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @oryqon/web",
+    "build": "npm run build --workspace @oryqon/web",
+    "start": "npm run start --workspace @oryqon/web",
+    "lint": "npm run lint --workspace @oryqon/web",
+    "check:branding": "node scripts/check-branding.mjs",
+    "check": "npm run check:branding && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
