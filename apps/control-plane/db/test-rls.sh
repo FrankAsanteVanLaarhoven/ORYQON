@@ -13,6 +13,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 : "${DATABASE_URL:?set DATABASE_URL to a PostgreSQL connection string}"
 
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$DIR/migrations/0001_tenant_rls.sql"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$DIR/migrations/0002_domain_schema.sql"
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$DIR/tests/rls_cross_tenant.sql"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$DIR/tests/rls_domain.sql"
 
-echo "Gate 0 database RLS: PASSED"
+echo "Control-plane database RLS: PASSED (Gate 0 + Gates 2-7 schema)"
